@@ -1,6 +1,7 @@
 package zvirt
 
 import (
+	"io"
 	"log"
 	"time"
 
@@ -14,10 +15,35 @@ const (
 	providerName = "zvirt"
 )
 
-type Cloud struct{}
+type CloudConfig struct{}
 
-func NewCloud() *Cloud {
-	return &Cloud{}
+type Cloud struct {
+	config CloudConfig
+}
+
+func init() {
+	cloudprovider.RegisterCloudProvider(
+		providerName,
+		func(_ io.Reader) (cloudprovider.Interface, error) {
+			config, err := NewCloudConfig()
+			if err != nil {
+				return nil, err
+			}
+
+			return NewCloud(*config), nil
+		},
+	)
+}
+
+func NewCloud(config CloudConfig) *Cloud {
+	return &Cloud{
+		config: config,
+	}
+}
+
+func NewCloudConfig() (*CloudConfig, error) {
+	cloudConfig := &CloudConfig{}
+	return cloudConfig, nil
 }
 
 func (zc *Cloud) Initialize(
