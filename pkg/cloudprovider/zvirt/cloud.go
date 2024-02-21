@@ -1,10 +1,14 @@
 package zvirt
 
 import (
+	"fmt"
 	"io"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
+	"github.com/deckhouse/zvirt-cloud-controller-manager/pkg/zvirtapi"
 	"k8s.io/client-go/informers"
 	cloudprovider "k8s.io/cloud-provider"
 
@@ -13,12 +17,23 @@ import (
 
 const (
 	providerName = "zvirt"
+
+	envZvirtAPIURL   = "ZVIRT_API_URL"
+	envZvirtUsername = "ZVIRT_USERNAME"
+	envZvirtPassword = "ZVIRT_PASSWORD"
+	envZvirtInsecure = "ZVIRT_INSECURE"
 )
 
-type CloudConfig struct{}
+type CloudConfig struct {
+	APIURL   string
+	Username string
+	Password string
+	Insecure bool
+}
 
 type Cloud struct {
-	config CloudConfig
+	zvirtService *zvirtapi.ZvirtCloudAPI
+	config       CloudConfig
 }
 
 func init() {
@@ -30,19 +45,56 @@ func init() {
 				return nil, err
 			}
 
-			return NewCloud(*config), nil
+			api, err := zvirtapi.NewZvirtCloudAPI(
+				config.APIURL,
+				config.Username,
+				config.Password,
+				config.Insecure,
+			)
+
+			return NewCloud(*config, api), nil
 		},
 	)
 }
 
-func NewCloud(config CloudConfig) *Cloud {
+func NewCloud(config CloudConfig, api *zvirtapi.ZvirtCloudAPI) *Cloud {
 	return &Cloud{
-		config: config,
+		zvirtService: api,
+		config:       config,
 	}
 }
 
 func NewCloudConfig() (*CloudConfig, error) {
 	cloudConfig := &CloudConfig{}
+
+	apiURL := os.Getenv(envZvirtAPIURL)
+	if apiURL == "" {
+		return nil, fmt.Errorf("environment variable %q is required", envZvirtAPIURL)
+	}
+	cloudConfig.APIURL = apiURL
+
+	username := os.Getenv(envZvirtUsername)
+	if username == "" {
+		return nil, fmt.Errorf("environment variable %q is required", envZvirtUsername)
+	}
+	cloudConfig.Username = username
+
+	password := os.Getenv(envZvirtPassword)
+	if password == "" {
+		return nil, fmt.Errorf("environment variable %q is required", envZvirtPassword)
+	}
+	cloudConfig.Password = password
+
+	insecure := os.Getenv(envZvirtInsecure)
+	cloudConfig.Insecure = false
+	if insecure != "" {
+		v, err := strconv.ParseBool(insecure)
+		if err != nil {
+			return nil, err
+		}
+		cloudConfig.Insecure = v
+	}
+
 	return cloudConfig, nil
 }
 
@@ -74,7 +126,7 @@ func (zc *Cloud) LoadBalancer() (cloudprovider.LoadBalancer, bool) {
 
 // Instances returns an instances interface if supported.
 func (zc *Cloud) Instances() (cloudprovider.Instances, bool) {
-	return nil, false
+	return zc, true
 }
 
 // Zones returns a zones interface if supported.

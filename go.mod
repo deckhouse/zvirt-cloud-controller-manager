@@ -3,7 +3,9 @@ module github.com/deckhouse/zvirt-cloud-controller-manager
 go 1.21.3
 
 require (
+	github.com/ovirt/go-ovirt-client/v3 v3.2.0
 	k8s.io/apimachinery v0.29.2
+	k8s.io/client-go v0.29.2
 	k8s.io/cloud-provider v0.29.2
 	k8s.io/component-base v0.29.2
 	k8s.io/klog/v2 v2.120.1
@@ -50,6 +52,8 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/ovirt/go-ovirt v0.0.0-20220427092237-114c47f2835c // indirect
+	github.com/ovirt/go-ovirt-client-log/v3 v3.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.16.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
@@ -94,7 +98,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.29.2 // indirect
 	k8s.io/apiserver v0.29.2 // indirect
-	k8s.io/client-go v0.29.2 // indirect
 	k8s.io/component-helpers v0.29.2 // indirect
 	k8s.io/controller-manager v0.29.2 // indirect
 	k8s.io/kms v0.29.2 // indirect
