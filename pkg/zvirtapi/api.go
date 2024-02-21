@@ -2,6 +2,7 @@ package zvirtapi
 
 import (
 	"errors"
+	"log"
 
 	ovirtclientlog "github.com/ovirt/go-ovirt-client-log/v3"
 	ovirtclient "github.com/ovirt/go-ovirt-client/v3"
@@ -14,7 +15,7 @@ type ZvirtCloudAPI struct {
 }
 
 func NewZvirtCloudAPI(apiURL, username, password string, insecure bool) (*ZvirtCloudAPI, error) {
-	logger := ovirtclientlog.NewGoLogger()
+	logger := ovirtclientlog.NewGoLogger(log.Default())
 
 	tls := ovirtclient.TLS()
 	tls.CACertsFromSystem()
