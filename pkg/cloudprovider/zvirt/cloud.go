@@ -89,7 +89,7 @@ func NewCloudConfig() (*CloudConfig, error) {
 	cloudConfig.Password = password
 
 	insecure := os.Getenv(envZvirtInsecure)
-	cloudConfig.Insecure = false
+	cloudConfig.Insecure = true
 	log.Printf("ZvirtCloudAPI Insecure: %v", insecure)
 
 	if insecure != "" {
