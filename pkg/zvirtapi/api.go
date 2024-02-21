@@ -11,7 +11,7 @@ import (
 var ErrNotFound = errors.New("not found")
 
 type ZvirtCloudAPI struct {
-	ComputeSvc ComputeService
+	ComputeSvc *ComputeService
 }
 
 func NewZvirtCloudAPI(apiURL, username, password string, insecure bool) (*ZvirtCloudAPI, error) {
@@ -37,6 +37,6 @@ func NewZvirtCloudAPI(apiURL, username, password string, insecure bool) (*ZvirtC
 	}
 
 	return &ZvirtCloudAPI{
-		ComputeSvc: *NewComputeService(client),
+		ComputeSvc: NewComputeService(client),
 	}, nil
 }

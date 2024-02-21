@@ -51,6 +51,9 @@ func init() {
 				config.Password,
 				config.Insecure,
 			)
+			if err != nil {
+				return nil, err
+			}
 
 			return NewCloud(*config, api), nil
 		},
