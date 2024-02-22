@@ -11,6 +11,7 @@ import (
 	"github.com/deckhouse/zvirt-cloud-controller-manager/pkg/zvirtapi"
 	"k8s.io/client-go/informers"
 	cloudprovider "k8s.io/cloud-provider"
+	"k8s.io/klog/v2"
 
 	"k8s.io/client-go/tools/cache"
 )
@@ -90,7 +91,7 @@ func NewCloudConfig() (*CloudConfig, error) {
 
 	insecure := os.Getenv(envZvirtInsecure)
 	cloudConfig.Insecure = false
-
+	klog.V(4).Infof("init CloudConfig: %s=%s", envZvirtInsecure, insecure)
 	if insecure != "" {
 		v, err := strconv.ParseBool(insecure)
 		if err != nil {

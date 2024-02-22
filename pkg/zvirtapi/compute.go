@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	ovirtclient "github.com/ovirt/go-ovirt-client/v3"
+	"k8s.io/klog/v2"
 )
 
 type ComputeService struct {
@@ -52,12 +53,14 @@ func (cSvc *ComputeService) GetVMIPAddresses(ctx context.Context, vm ovirtclient
 		for _, ip := range ips {
 			// skip IPv6
 			if ip.To4() == nil {
+				klog.V(4).Infof("GetVMIPAddresses: externalIP [%v] skipped, not IPv4", ip.String())
 				continue
 			}
 
 			strIP := ip.String()
 			externalIPMap[strIP] = struct{}{}
 			externalIPs = append(externalIPs, strIP)
+			klog.V(4).Infof("GetVMIPAddresses: externalIP [%v] ", strIP)
 		}
 	}
 
@@ -70,6 +73,7 @@ func (cSvc *ComputeService) GetVMIPAddresses(ctx context.Context, vm ovirtclient
 		for _, ip := range ips {
 			// skip IPv6
 			if ip.To4() == nil {
+				klog.V(4).Infof("GetVMIPAddresses: ip [%v] skipped, not IPv4", ip.String())
 				continue
 			}
 
@@ -77,9 +81,11 @@ func (cSvc *ComputeService) GetVMIPAddresses(ctx context.Context, vm ovirtclient
 
 			// skip external IP
 			if _, ok := externalIPMap[strIP]; ok {
+				klog.V(4).Infof("GetVMIPAddresses: ip [%v] skipped, externalIP", strIP)
 				continue
 			}
 			localIPs = append(localIPs, strIP)
+			klog.V(4).Infof("GetVMIPAddresses: localIP [%v] ", strIP)
 		}
 	}
 
