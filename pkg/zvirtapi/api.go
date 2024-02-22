@@ -19,13 +19,11 @@ func NewZvirtCloudAPI(apiURL, username, password string, insecure bool) (*ZvirtC
 
 	tls := ovirtclient.TLS()
 
-	tls.Insecure()
-
-	// if insecure {
-	// 	tls.Insecure()
-	// } else {
-	// 	tls.CACertsFromSystem()
-	// }
+	if insecure {
+		tls.Insecure()
+	} else {
+		tls.CACertsFromSystem()
+	}
 
 	client, err := ovirtclient.New(
 		apiURL,
